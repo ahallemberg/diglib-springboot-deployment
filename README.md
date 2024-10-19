@@ -2,9 +2,14 @@
 # Bygge
 
 ```bash	
-rm -f app.jar
+
+cd DigLib-backend
+
+rm -f docker/app.jar
 
 ./mvnw clean package
+
+cd docker
 
 cp ../target/*.jar ./app.jar
 
