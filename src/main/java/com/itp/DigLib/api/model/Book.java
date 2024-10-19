@@ -4,11 +4,18 @@ import java.nio.file.Paths;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+
 /**
  * Represents a book with a title, author, year, genre, ISBN, and file path.
  */
-public final class Book {
-    private static int lastId = 0; // Static variable to keep track of the last assigned ID
+@Entity // This tells Hibernate to make a table out of this class
+public class Book {
+    @Id
+    @GeneratedValue(strategy=GenerationType.AUTO)
     private int id;
     private String title;
     private String author;
@@ -17,35 +24,34 @@ public final class Book {
     private String isbn;
     private String filename;
 
-    /**
-     * Constructs a new Book object with the specified details.
-     *
-     * @param title the title of the book
-     * @param author the author of the book
-     * @param genre the genre of the book
-     * @param isbn the ISBN of the book, which must be 13 digits
-     * @param year the year of publication, which must be between 0 and 2025
-     * @throws IllegalArgumentException if any of the fields are null, empty, or invalid
-     */
+    public Book(){
+    }
 
-    public Book(String title, String author, String genre, String isbn, int year) throws IllegalArgumentException  {
+    public void setYear(int year) {
         if(year < 0 || year > 2025) {
             throw new IllegalArgumentException("Year must be between 0 and 2025");
         } 
-        if(title.isEmpty() || author.isEmpty() || genre.isEmpty() || isbn.isEmpty()) {
-            throw new IllegalArgumentException("No fields can be empty");
-        }
+        this.year = year;
+    }
+
+    public void setGenre(String genre) {
+        this.genre = genre;
+    }
+
+    public void setIsbn(String isbn) {
         if(!isbn.matches("[0-9]{13}")) {
             throw new IllegalArgumentException("ISBN must be 13 digits");
         }
-        
-        this.filename = toCamelCase(title) + ".txt";
-        this.title = title;
-        this.author = author;
-        this.genre = genre;
-        this.year = year;
         this.isbn = isbn;
-        this.id = ++lastId; // Increment the lastId and assign it to the id
+    }
+
+    public void setAuthor(String author) {
+        this.author = author;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+        this.filename = toCamelCase(title) + ".txt";
     }
 
     /**
