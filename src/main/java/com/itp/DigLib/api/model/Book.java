@@ -24,8 +24,7 @@ public class Book {
     private String isbn;
     private String filename;
 
-    public Book(){
-    }
+    public Book(){}
 
     public void setYear(int year) {
         if(year < 0 || year > 2025) {
@@ -46,10 +45,16 @@ public class Book {
     }
 
     public void setAuthor(String author) {
+        if(author == null || author.isEmpty()) {
+            throw new IllegalArgumentException("Author cannot be empty");
+        }
         this.author = author;
     }
 
     public void setTitle(String title) {
+        if(title == null || title.isEmpty()) {
+            throw new IllegalArgumentException("Title cannot be empty");
+        }
         this.title = title;
         this.filename = toCamelCase(title) + ".txt";
     }
