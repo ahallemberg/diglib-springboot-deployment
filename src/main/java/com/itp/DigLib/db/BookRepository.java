@@ -8,6 +8,7 @@ import org.springframework.data.repository.PagingAndSortingRepository;
 import com.itp.DigLib.api.model.Book;
 
 public interface BookRepository extends PagingAndSortingRepository<Book, Integer>, CrudRepository<Book, Integer> {
+    @SuppressWarnings("null")
     @Override
     Page<Book> findAll(Pageable pageable);
     Page<Book> findByTitleContainingIgnoreCase(String title, Pageable pageable);

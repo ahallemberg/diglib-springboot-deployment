@@ -2,10 +2,8 @@ FROM eclipse-temurin:17-jdk-focal
 
 WORKDIR /app
 
-# Copy the jar file
-COPY *.jar app.jar
+COPY app.jar app.jar
 
-# Create directory for book contents with proper permissions
 RUN mkdir -p /app/bookcontents && \
     chmod 777 /app/bookcontents
 
