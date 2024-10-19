@@ -46,7 +46,7 @@ check_required_commands() {
 # Create docker directory structure
 create_directory_structure() {
     print_status "Creating directory structure..."
-    mkdir -p docker/config
+    mkdir -p docker
     print_success "Directory structure created"
 }
 
