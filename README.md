@@ -1,18 +1,16 @@
 
-# Bygge
+# Bygge shiten
+
+## krav
+
+maven 3.5 +
+
+Docker 
+
+## Bygge
 
 ```bash	
 
-cd DigLib-backend
-
-rm -f docker/app.jar
-
-./mvnw clean package
-
-cd docker
-
-cp ../target/*.jar ./app.jar
-
-docker-compose up --build
+    ./build.sh
 
 ```
