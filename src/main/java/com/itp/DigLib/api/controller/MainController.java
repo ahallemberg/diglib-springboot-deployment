@@ -39,7 +39,7 @@ public class MainController {
             @RequestParam String genre,
             @RequestParam String isbn,
             @RequestParam int year,
-            @RequestParam("content") MultipartFile content
+            @RequestParam MultipartFile content
     ) {
         try {
             Book book = new Book();
