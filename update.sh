@@ -48,6 +48,16 @@ build_spring_boot() {
     print_success "Spring Boot application built successfully"
 }
 
+# Copy JAR file to Docker directory
+update_jar() {
+    print_status "Removing existing JAR file from Docker directory..."
+    rm -f docker/app.jar
+    print_success "Existing JAR file removed successfully"
+    print_status "Copying JAR file to Docker directory..."
+    cp target/*.jar docker/app.jar
+    print_success "JAR file copied successfully"
+}
+
 # Check MySQL container status
 check_mysql_status() {
     print_status "Checking MySQL container status..."
@@ -121,6 +131,7 @@ main() {
     check_required_commands
     check_mysql_status
     build_spring_boot
+    update_jar
     rebuild_spring_boot_container
     check_spring_boot_status
     

@@ -50,6 +50,12 @@ build_spring_boot() {
     print_success "Spring Boot application built successfully"
 }
 
+copy_jar_to_docker() {
+    print_status "Copying JAR file to Docker directory..."
+    cp target/*.jar docker/app.jar
+    print_success "JAR file copied successfully"
+}
+
 # Build and start Docker containers
 start_docker_containers() {
     print_status "Building and starting Docker containers..."
@@ -104,6 +110,7 @@ main() {
     
     check_required_commands
     build_spring_boot
+    copy_jar_to_docker
     start_docker_containers
     check_container_status
     
