@@ -17,6 +17,7 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockMultipartFile;
 
@@ -63,7 +64,7 @@ public class MainControllerTest {
             content
         );
 
-        assertEquals(200, response.getStatusCode());
+        assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals("Book added successfully", response.getBody());
         verify(bookRepo).save(any(Book.class));
         verify(bookContentService).storeFile(any(), anyString());
@@ -93,7 +94,7 @@ public class MainControllerTest {
 
         ResponseEntity<Book> response = mainController.getBook(1);
 
-        assertEquals(200, response.getStatusCode());
+        assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals("Test Book", response.getBody().getTitle());
     }
 
@@ -108,7 +109,7 @@ public class MainControllerTest {
 
         ResponseEntity<PagedContent> response = mainController.getBookContent(1, 0, null);
 
-        assertEquals(200, response.getStatusCode());
+        assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals("test content", response.getBody().getContent());
     }
 
@@ -120,7 +121,7 @@ public class MainControllerTest {
 
         ResponseEntity<String> response = mainController.deleteBook(1);
 
-        assertEquals(200, response.getStatusCode());
+        assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals("Book deleted successfully", response.getBody());
         verify(bookRepo).deleteById(1);
         verify(bookContentService).deleteBookContent(anyString());

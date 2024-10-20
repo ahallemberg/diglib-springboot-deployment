@@ -104,7 +104,6 @@ main() {
     
     check_required_commands
     build_spring_boot
-    copy_files
     start_docker_containers
     check_container_status
     
