@@ -53,7 +53,7 @@ public class SetController {
             bookContentService.storeFile(content, book.getFileName());
             
             logger.info("Added new book: {}", title);
-            return ResponseEntity.ok("Book added successfully");
+            return ResponseEntity.ok("ID:" + book.getID());
         } catch (IOException e) {
             logger.error("Failed to store book content for book: {}. Error: {}", title, e.getMessage());
             return ResponseEntity.internalServerError().body("Failed to store book content: " + e.getMessage());
