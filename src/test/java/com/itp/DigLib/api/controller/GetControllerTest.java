@@ -19,14 +19,13 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.mock.web.MockMultipartFile;
 
 import com.itp.DigLib.api.model.Book;
 import com.itp.DigLib.api.model.PagedContent;
 import com.itp.DigLib.api.service.BookContentService;
 import com.itp.DigLib.db.BookRepository;
 
-public class MainControllerTest {
+public class GetControllerTest {
 
     @Mock
     private BookRepository bookRepo;
@@ -35,39 +34,11 @@ public class MainControllerTest {
     private BookContentService bookContentService;
 
     @InjectMocks
-    private MainController mainController;
+    private GetController getController;
 
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-    }
-
-    @Test
-    void testAddNewBook() throws Exception {
-        Book book = new Book();
-        book.setTitle("Test Book");
-        when(bookRepo.save(any(Book.class))).thenReturn(book);
-
-        MockMultipartFile content = new MockMultipartFile(
-            "content",
-            "test.txt",
-            "text/plain",
-            "test content".getBytes()
-        );
-
-        ResponseEntity<String> response = mainController.addNewBook(
-            "Test Book",
-            "Test Author",
-            "Fiction",
-            "1234567890123",
-            2020,
-            content
-        );
-
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals("Book added successfully", response.getBody());
-        verify(bookRepo).save(any(Book.class));
-        verify(bookContentService).storeFile(any(), anyString());
     }
 
     @Test
@@ -80,7 +51,7 @@ public class MainControllerTest {
         Page<Book> page = new PageImpl<>(Arrays.asList(book1, book2));
         when(bookRepo.findAll(any(PageRequest.class))).thenReturn(page);
 
-        Page<Book> result = mainController.getAllBooks(0, 10, "title", "asc", null, null, null);
+        Page<Book> result = getController.getAllBooks(0, 10, "title", "asc", null, null, null);
 
         assertEquals(2, result.getContent().size());
         verify(bookRepo).findAll(any(PageRequest.class));
@@ -92,7 +63,7 @@ public class MainControllerTest {
         book.setTitle("Test Book");
         when(bookRepo.findById(1)).thenReturn(Optional.of(book));
 
-        ResponseEntity<Book> response = mainController.getBook(1);
+        ResponseEntity<Book> response = getController.getBook(1);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals("Test Book", response.getBody().getTitle());
@@ -107,23 +78,9 @@ public class MainControllerTest {
         PagedContent pagedContent = new PagedContent("test content", 0, 1, 12, 12);
         when(bookContentService.readBookContent(anyString(), anyInt(), any())).thenReturn(pagedContent);
 
-        ResponseEntity<PagedContent> response = mainController.getBookContent(1, 0, null);
+        ResponseEntity<PagedContent> response = getController.getBookContent(1, 0, null);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals("test content", response.getBody().getContent());
-    }
-
-    @Test
-    void testDeleteBook() {
-        Book book = new Book();
-        book.setTitle("Test Book");
-        when(bookRepo.findById(1)).thenReturn(Optional.of(book));
-
-        ResponseEntity<String> response = mainController.deleteBook(1);
-
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals("Book deleted successfully", response.getBody());
-        verify(bookRepo).deleteById(1);
-        verify(bookContentService).deleteBookContent(anyString());
     }
 }
