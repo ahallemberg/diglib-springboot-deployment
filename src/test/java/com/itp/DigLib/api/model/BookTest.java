@@ -1,97 +1,111 @@
-/* package com.itp.DigLib.api.model;
+package com.itp.DigLib.api.model;
 
-import java.nio.file.Paths;
-
-import org.junit.jupiter.api.Assertions;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-
 public class BookTest {
-    
-    private final Book book = new Book("Test Title", "Test Author", "Test Genre", "1894635901825", 2021);
-    
-    @Test
-    public void testParams() {
-        Assertions.assertEquals("Test Title", book.getTitle());
-        Assertions.assertEquals("Test Author", book.getAuthor());
-        Assertions.assertEquals("Test Genre", book.getGenre());
-        Assertions.assertEquals("1894635901825", book.getIsbn());
-        Assertions.assertEquals(2021, book.getYear());
-        Assertions.assertEquals(Book.toCamelCase(book.getTitle()) + ".txt", book.getFileName().toString());
+    private Book book;
+
+    @BeforeEach
+    void setUp() {
+        book = new Book();
     }
 
     @Test
-    public void testIllegalParams() {
-        // Test empty fields
-        Assertions.assertThrows(IllegalArgumentException.class, () -> {
-            new Book("", "Test Author", "Test Genre", "1894635901825", 2021);
-        });
-    
-        Assertions.assertThrows(IllegalArgumentException.class, () -> {
-            new Book("Title", "", "Test Genre", "1894635901825", 2021);
-        });
-    
-        Assertions.assertThrows(IllegalArgumentException.class, () -> {
-            new Book("Title", "Test Author", "", "1894635901825", 2021);
-        });
-    
-        Assertions.assertThrows(IllegalArgumentException.class, () -> {
-            new Book("Title", "Test Author", "Test Genre", "", 2021);
-        });
-    
-        // Test invalid ISBN format
-        Assertions.assertThrows(IllegalArgumentException.class, () -> {
-            new Book("Title", "Test Author", "Test Genre", "123456789", 2021); // too short
-        });
-    
-        Assertions.assertThrows(IllegalArgumentException.class, () -> {
-            new Book("Title", "Test Author", "Test Genre", "12345678901234", 2021); // too long
-        });
-    
-        Assertions.assertThrows(IllegalArgumentException.class, () -> {
-            new Book("Title", "Test Author", "Test Genre", "12abc67890123", 2021); // non-numeric characters
-        });
-    
-        // Test invalid year
-        Assertions.assertThrows(IllegalArgumentException.class, () -> {
-            new Book("Title", "Test Author", "Test Genre", "1894635901825", 2030); // year > 2025
-        });
-    
-        Assertions.assertThrows(IllegalArgumentException.class, () -> {
-            new Book("Title", "Test Author", "Test Genre", "1894635901825", -4); // year < 0
-        });
-    }
+    void testValidBookCreation() {
+        book.setTitle("The Great Gatsby");
+        book.setAuthor("F. Scott Fitzgerald");
+        book.setYear(1925);
+        book.setGenre("Fiction");
+        book.setIsbn("1234567890123");
 
-    @Test 
-    public void testMetadata() {
-        Book book = new Book("TestTitle", "TestAuthor", "TestGenre", "1894635901825", 2021);
-        String metadataFormat ="Title: " + book.getTitle() +
-         "\nAuthor: " + book.getAuthor() +
-          "\nGenre: " + book.getGenre() +
-           "\nISBN: " + book.getIsbn() +
-            "\nYear: " + book.getYear();
-        assertEquals(metadataFormat, book.getMetadata());
+        assertEquals("The Great Gatsby", book.getTitle());
+        assertEquals("F. Scott Fitzgerald", book.getAuthor());
+        assertEquals(1925, book.getYear());
+        assertEquals("Fiction", book.getGenre());
+        assertEquals("1234567890123", book.getIsbn());
+        assertEquals("TheGreatGatsby.txt", book.getFileName());
     }
 
     @Test
-    public void testToCamelCase() {
-        //invalid input
-        String nullString = null;
-        String emptyString = "";
-        assertEquals(nullString, Book.toCamelCase(nullString));
-        assertEquals(emptyString, Book.toCamelCase(emptyString));
+    void testInvalidYear() {
+        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
+            book.setYear(2026);
+        });
+        assertTrue(exception.getMessage().contains("Year must be between 0 and 2025"));
 
-        assertEquals("TestTitle", Book.toCamelCase("Test title"));
-        assertEquals("TestTitle", Book.toCamelCase("test Title"));
-
-        
+        exception = assertThrows(IllegalArgumentException.class, () -> {
+            book.setYear(-1);
+        });
+        assertTrue(exception.getMessage().contains("Year must be between 0 and 2025"));
     }
 
     @Test
-    public void testGetFilePath() {
-        Book book = new Book("Test Title", "TestAuthor", "TestGenre", "1894635901825", 2021);
-        assertEquals(Paths.get("books", "TestTitle.txt").toString(), book.getFilePath("books"));
+    void testInvalidIsbn() {
+        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
+            book.setIsbn("123"); // Too short
+        });
+        assertTrue(exception.getMessage().contains("ISBN must be 13 digits"));
+
+        exception = assertThrows(IllegalArgumentException.class, () -> {
+            book.setIsbn("123abc4567890"); // Contains letters
+        });
+        assertTrue(exception.getMessage().contains("ISBN must be 13 digits"));
+    }
+
+    @Test
+    void testEmptyTitle() {
+        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
+            book.setTitle("");
+        });
+        assertTrue(exception.getMessage().contains("Title cannot be empty"));
+
+        exception = assertThrows(IllegalArgumentException.class, () -> {
+            book.setTitle(null);
+        });
+        assertTrue(exception.getMessage().contains("Title cannot be empty"));
+    }
+
+    @Test
+    void testEmptyAuthor() {
+        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
+            book.setAuthor("");
+        });
+        assertTrue(exception.getMessage().contains("Author cannot be empty"));
+
+        exception = assertThrows(IllegalArgumentException.class, () -> {
+            book.setAuthor(null);
+        });
+        assertTrue(exception.getMessage().contains("Author cannot be empty"));
+    }
+
+    @Test
+    void testToCamelCase() {
+        assertEquals("TheGreatGatsby", Book.toCamelCase("the great gatsby"));
+        assertEquals("HelloWorld", Book.toCamelCase("hello world"));
+        assertEquals("", Book.toCamelCase(""));
+        assertNull(Book.toCamelCase(null));
+    }
+
+    @Test
+    void testGetMetadata() {
+        book.setTitle("Test Book");
+        book.setAuthor("Test Author");
+        book.setYear(2020);
+        book.setGenre("Test Genre");
+        book.setIsbn("1234567890123");
+
+        String expectedMetadata = 
+"""
+Title: Test Book
+Author: Test Author
+Genre: Test Genre
+ISBN: 1234567890123
+Year: 2020""";
+        assertEquals(expectedMetadata, book.getMetadata());
     }
 }
- */

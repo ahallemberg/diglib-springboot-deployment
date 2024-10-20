@@ -1,4 +1,4 @@
-/* package com.itp.DigLib;
+package com.itp.DigLib;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -11,4 +11,4 @@ class DigLibApplicationTests {
 	}
 
 }
- */
+ 

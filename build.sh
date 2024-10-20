@@ -43,92 +43,11 @@ check_required_commands() {
     print_success "All required commands are available"
 }
 
-# Create docker directory structure
-create_directory_structure() {
-    print_status "Creating directory structure..."
-    mkdir -p docker
-    print_success "Directory structure created"
-}
-
 # Build Spring Boot application
 build_spring_boot() {
     print_status "Building Spring Boot application..."
-    ./mvnw clean package -DskipTests
+    ./mvnw clean package
     print_success "Spring Boot application built successfully"
-}
-
-# Copy files to docker directory
-copy_files() {
-    print_status "Copying files to docker directory..."
-    
-    # Copy JAR file
-    cp target/*.jar docker/app.jar
-    
-    # Create Dockerfile if it doesn't exist
-    if [ ! -f "docker/Dockerfile" ]; then
-        cat > docker/Dockerfile << 'EOF'
-FROM eclipse-temurin:17-jdk-focal
-
-WORKDIR /app
-
-COPY app.jar app.jar
-
-RUN mkdir -p /app/bookcontents && \
-    chmod 777 /app/bookcontents
-
-EXPOSE 8080
-
-ENTRYPOINT ["java","-jar","app.jar"]
-EOF
-    fi
-
-    # Create docker-compose.yml if it doesn't exist
-    if [ ! -f "docker/docker-compose.yml" ]; then
-        cat > docker/docker-compose.yml << 'EOF'
-
-name: diglib-backend
-services:
-  mysql:
-    container_name: mySQL
-    image: mysql:8.0
-    environment:
-      MYSQL_ROOT_PASSWORD: your_root_password
-      MYSQL_DATABASE: diglib
-      MYSQL_USER: your_user
-      MYSQL_PASSWORD: your_password
-    ports:
-      - "3306:3306"
-    volumes:
-      - mysql_data:/var/lib/mysql
-    healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-
-  app:
-    container_name: app
-    build: .
-    ports:
-      - "8080:8080"
-    environment:
-      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/diglib
-      SPRING_DATASOURCE_USERNAME: your_user
-      SPRING_DATASOURCE_PASSWORD: your_password
-      BOOK_UPLOAD_DIR: /app/bookcontents
-    volumes:
-      - book_contents:/app/bookcontents
-    depends_on:
-      mysql:
-        condition: service_healthy
-
-volumes:
-  mysql_data:
-  book_contents:
-EOF
-    fi
-    
-    print_success "Files copied successfully"
 }
 
 # Build and start Docker containers
@@ -184,7 +103,6 @@ main() {
     
     
     check_required_commands
-    create_directory_structure
     build_spring_boot
     copy_files
     start_docker_containers

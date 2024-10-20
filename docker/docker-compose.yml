@@ -1,0 +1,40 @@
+
+name: diglib-backend
+services:
+  mysql:
+    container_name: mySQL
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: your_root_password
+      MYSQL_DATABASE: diglib
+      MYSQL_USER: your_user
+      MYSQL_PASSWORD: your_password
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  app:
+    container_name: diglib
+    build: .
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/diglib
+      SPRING_DATASOURCE_USERNAME: your_user
+      SPRING_DATASOURCE_PASSWORD: your_password
+      BOOK_UPLOAD_DIR: /app/bookcontents
+    volumes:
+      - book_contents:/app/bookcontents
+    depends_on:
+      mysql:
+        condition: service_healthy
+
+volumes:
+  mysql_data:
+  book_contents:
