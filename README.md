@@ -5,12 +5,19 @@
 
 maven 3.5 +
 
-Docker 
+Docker som kjører
 
-## Bygge
+## Første kjøring
 
-```bash	
+```bash
 
     ./build.sh
+
+```
+## Oppdatere app
+
+```bash
+
+    ./update.sh
 
 ```

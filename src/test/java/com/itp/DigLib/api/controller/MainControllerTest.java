@@ -1,9 +1,18 @@
 package com.itp.DigLib.api.controller;
 
-import org.junit.jupiter.api.Test;
+import java.util.Arrays;
+import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyString;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import org.mockito.MockitoAnnotations;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -15,13 +24,6 @@ import com.itp.DigLib.api.model.Book;
 import com.itp.DigLib.api.model.PagedContent;
 import com.itp.DigLib.api.service.BookContentService;
 import com.itp.DigLib.db.BookRepository;
-
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.*;
-import static org.junit.jupiter.api.Assertions.*;
-
-import java.util.Arrays;
-import java.util.Optional;
 
 public class MainControllerTest {
 
@@ -61,7 +63,7 @@ public class MainControllerTest {
             content
         );
 
-        assertEquals(200, response.getStatusCodeValue());
+        assertEquals(200, response.getStatusCode());
         assertEquals("Book added successfully", response.getBody());
         verify(bookRepo).save(any(Book.class));
         verify(bookContentService).storeFile(any(), anyString());
@@ -91,7 +93,7 @@ public class MainControllerTest {
 
         ResponseEntity<Book> response = mainController.getBook(1);
 
-        assertEquals(200, response.getStatusCodeValue());
+        assertEquals(200, response.getStatusCode());
         assertEquals("Test Book", response.getBody().getTitle());
     }
 
@@ -106,7 +108,7 @@ public class MainControllerTest {
 
         ResponseEntity<PagedContent> response = mainController.getBookContent(1, 0, null);
 
-        assertEquals(200, response.getStatusCodeValue());
+        assertEquals(200, response.getStatusCode());
         assertEquals("test content", response.getBody().getContent());
     }
 
@@ -118,7 +120,7 @@ public class MainControllerTest {
 
         ResponseEntity<String> response = mainController.deleteBook(1);
 
-        assertEquals(200, response.getStatusCodeValue());
+        assertEquals(200, response.getStatusCode());
         assertEquals("Book deleted successfully", response.getBody());
         verify(bookRepo).deleteById(1);
         verify(bookContentService).deleteBookContent(anyString());
