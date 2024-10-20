@@ -85,8 +85,11 @@ EOF
     # Create docker-compose.yml if it doesn't exist
     if [ ! -f "docker/docker-compose.yml" ]; then
         cat > docker/docker-compose.yml << 'EOF'
+
+name: diglib-backend
 services:
   mysql:
+    container_name: mySQL
     image: mysql:8.0
     environment:
       MYSQL_ROOT_PASSWORD: your_root_password
@@ -104,6 +107,7 @@ services:
       retries: 5
 
   app:
+    container_name: app
     build: .
     ports:
       - "8080:8080"
