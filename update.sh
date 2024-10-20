@@ -116,7 +116,7 @@ main() {
     if [ ! -f "pom.xml" ]; then
         echo -e "${RED}Error: pom.xml not found. Please run this script from the project root directory.${NC}"
         exit 1
-    }
+    fi
     
     check_required_commands
     check_mysql_status
