@@ -28,7 +28,7 @@ public class BookTest {
         assertEquals(1925, book.getYear());
         assertEquals("Fiction", book.getGenre());
         assertEquals("1234567890123", book.getIsbn());
-        assertEquals("TheGreatGatsby.txt", book.getFileName());
+        assertEquals("0_TheGreatGatsby.txt", book.getFileName());
     }
 
     @Test

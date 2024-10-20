@@ -59,7 +59,7 @@ public class SetControllerTest {
         );
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals("Book added successfully", response.getBody());
+        assertEquals("ID:" + book.getID(), response.getBody());
         verify(bookRepo).save(any(Book.class));
         verify(bookContentService).storeFile(any(), anyString());
     }
