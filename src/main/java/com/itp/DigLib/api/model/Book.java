@@ -56,7 +56,7 @@ public class Book {
             throw new IllegalArgumentException("Title cannot be empty");
         }
         this.title = title;
-        this.filename = toCamelCase(title) + ".txt";
+        this.filename = String.valueOf(id) + "_" + toCamelCase(title) + ".txt";
     }
 
     /**
