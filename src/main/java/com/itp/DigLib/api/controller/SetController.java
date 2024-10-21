@@ -51,6 +51,7 @@ public class SetController {
             
             book = bookRepo.save(book);
             bookContentService.storeFile(content, book.getFileName());
+
             
             logger.info("Added new book: {}", title);
             return ResponseEntity.ok("ID:" + book.getID());
@@ -59,7 +60,8 @@ public class SetController {
             return ResponseEntity.internalServerError().body("Failed to store book content: " + e.getMessage());
         } catch (IllegalArgumentException e) {
             logger.error("Illegal values provided for book: {}. Error: {}", title, e.getMessage());
-            return ResponseEntity.badRequest().body("Illegal values" + e.getMessage());
+            logger.error("values provided for: Title: {}. author: {}. genre: {}. isbn {}. year{} ", title, author, genre, isbn, year);
+            return ResponseEntity.badRequest().body("Illegal values " + e.getMessage());
         }
     }
 
