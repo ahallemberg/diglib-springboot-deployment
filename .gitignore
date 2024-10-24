@@ -1,3 +1,6 @@
+# ENV 
+*.env 
+
 HELP.md
 target/
 !.mvn/wrapper/maven-wrapper.jar
@@ -19,6 +22,7 @@ target/
 *.iml
 *.ipr
 
+
 ### NetBeans ###
 /nbproject/private/
 /nbbuild/
@@ -31,4 +35,3 @@ build/
 
 ### VS Code ###
 .vscode/
-
