@@ -1,0 +1,7 @@
+# Build javafx client
+build-javafx-client:
+    stage: build-javafx-client
+    script:
+        - mvn clean package -f client/diglib-javafx/pom.xml -B -DskipTests
+    dependencies:
+        - build-common

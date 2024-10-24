@@ -1,0 +1,51 @@
+build-backend:
+    stage: build-backend
+    script:
+        - cd backend
+        - mvn clean package -DskipTests
+    artifacts:
+        paths:
+            - backend/target/*.jar
+        expire_in: 1 hour
+
+    dependencies:
+        - build-common
+
+deploy-backend:
+    image: google/cloud-sdk:latest
+    stage: deploy-backend
+    script:
+        - echo $GCP_SERVICE_KEY | base64 -d > /tmp/gcloud-service-key.json
+        - gcloud auth activate-service-account --key-file=/tmp/gcloud-service-key.json
+        - gcloud config set project $PROJECT_ID
+        - gcloud auth configure-docker
+
+        # Build and push the Docker image
+        - cd backend
+        - docker build -t gcr.io/$PROJECT_ID/$SERVICE_NAME .
+        - docker push gcr.io/$PROJECT_ID/$SERVICE_NAME
+
+        # Deploy to Cloud Run
+        - |
+            gcloud run deploy $SERVICE_NAME \
+            --image gcr.io/$PROJECT_ID/$SERVICE_NAME \
+            --platform managed \
+            --region $REGION \
+            --allow-unauthenticated \
+            --set-env-vars "DB_NAME=$DB_NAME,INSTANCE_CONNECTION_NAME=$PROJECT_ID:$REGION:$DB_INSTANCE_NAME,BUCKET_NAME=$BUCKET_NAME" \
+            --set-secrets "DB_USER=diglib-db-user:latest,DB_PASS=diglib-db-pass:latest"
+
+    dependencies: 
+        - build-backend
+    environment:
+        name: production
+        url: https://$SERVICE_NAME-$HASH.a.run.app
+    only: 
+        - master 
+
+test-backend:
+    stage: test-backend
+    needs: deploy-backend
+    script:
+        - cd backend
+        - mvn test

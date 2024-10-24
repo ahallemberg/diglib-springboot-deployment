@@ -1,0 +1,25 @@
+include:
+    - local: 'ci/common.yml'
+    - local: 'ci/javafx-client.yml'
+    - local: 'ci/react-client.yml'
+    - local: 'ci/backend.yml'
+
+stages:
+    - build-common 
+    - test-common  
+    - build-javafx-client
+    - build-react-client
+    - deploy-react-client 
+    - build-backend
+    - deploy-backend
+    - test-backend
+    # lastly, test the whole integration (not yet implemented)
+
+image: maven:3.9-eclipse-temurin-17
+
+variables:
+    MAVEN_OPTS: "-Dmaven.repo.local=.m2/repository"
+
+cache:
+    paths:
+        - .m2/repository

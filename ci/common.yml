@@ -1,0 +1,18 @@
+# Build common module
+build-common:
+    stage: build-common
+    script:
+        - mvn clean install -f common/domain/pom.xml -B -DskipTests
+    artifacts:
+        paths:
+            - common/domain/target/*.jar
+            - .m2/repository/com/itp/DigLib-domain
+    expire_in: 1 hour
+
+# Test common module
+test-common: 
+    stage: test-common
+    script:
+        - mvn test -f common/domain/pom.xml
+    dependencies:
+        - build-common
